@@ -4,6 +4,7 @@ import papel from "../assets/papel-arrugado.png";
 import tijeras from "../assets/tijeras.png";
 import "../components/card.component";
 import { getRandomChoice } from "../usecases/usecases";
+import { UserData, globalState } from "../service/global.state";
 
 export class GamePage extends LitElement {
   static styles = css`
@@ -18,15 +19,16 @@ export class GamePage extends LitElement {
       }
     }
   `;
-  userSelection: number | null;
+
   robotSelection: number | null;
   puntosUser: number;
   puntosRobot: number;
   message: string;
+  userData: UserData[];
+  user: UserData | undefined
 
   static get properties() {
     return {
-      userSelection: { type: Number },
       robotSelection: { type: Number },
       message: { type: String },
     };
@@ -34,15 +36,38 @@ export class GamePage extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
+
+    let userName = globalState.getUser();
+
+    const userExist = globalState
+      .getUserData()
+      .some((user) => user.username === userName);
+
+    if (!userExist) {
+      globalState.setUserData([
+        {
+          username: userName,
+          score: 0,
+        },
+      ]);
+    }
+
+      this.user = globalState
+       .getUserData()
+       .find((x) => x.username === userName);
+
+    if (this.user) {
+      this.puntosUser = this.user.score ?? 0;
+    }
   }
 
   constructor() {
     super();
-    this.userSelection = null;
     this.robotSelection = null;
     this.puntosUser = 0;
     this.puntosRobot = 0;
     this.message = "";
+    this.userData = globalState.getUserData();
   }
 
   selectionRobot() {
@@ -64,10 +89,10 @@ export class GamePage extends LitElement {
         this.paintMessage("Has Ganado");
       } else if (num === 2 && this.robotSelection === 1) {
         this.puntosUser += 1;
-        this.paintMessage(`Ha Ganado `);
+        this.paintMessage("Has Ganado");
       } else if (num === 1 && this.robotSelection === 0) {
         this.puntosUser += 1;
-        this.paintMessage(`Ha Ganado `);
+        this.paintMessage("Has Ganado");
       } else if (this.robotSelection === 0 && num === 2) {
         this.puntosRobot += 1;
         this.paintMessage(`Ha Ganado el robot`);
@@ -80,7 +105,14 @@ export class GamePage extends LitElement {
       } else {
         this.paintMessage(`Empate`);
       }
+
+      if(this.user){
+        this.user.score = this.puntosUser;
+        globalState.setUserData([this.user]);
+        console.log(this.puntosUser)
+      } 
     }, 1002);
+    
   }
 
   render() {
