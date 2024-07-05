@@ -1,5 +1,6 @@
 import "../components/form.component";
 import { LitElement, html, css } from "lit";
+import imageGame from "../assets/pngegg.png";
 
 export class HomeGame extends LitElement {
   static styles = css`
@@ -7,6 +8,11 @@ export class HomeGame extends LitElement {
       font-size: 2rem;
       padding: 1rem;
       color: #254258;
+      width:100%;
+      text-align:center;
+      img{
+        width:450px;
+      }
     }
     main {
       display: flex;
@@ -17,7 +23,7 @@ export class HomeGame extends LitElement {
 
   render() {
     return html`
-      <header>Juego Piedra Papel Tijera</header>
+      <header><img src=${imageGame} alt="Juego Piedra Papel Tijera Lagarto Spock"/></header>
       <main>
         <form-component></form-component>
       </main>

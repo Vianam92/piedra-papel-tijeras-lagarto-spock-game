@@ -4,15 +4,21 @@ import { ls } from "../service/ls";
 import { globalState } from "../service/global.state";
 
 export class FomComponent extends LitElement {
-  static styles = css`
+  static styles = css` 
+  :host{
+    display:flex;
+    justify-content:center;
+    width:100%;
+  }
     form {
       display: flex;
       flex-direction: column;
       row-gap: 0.5rem;
       width: 100%;
-      max-width: 350px;
+      max-width: 300px;
+      color:white;
       padding: 2rem;
-      background-color: #25458458;
+      background-color: #86061f9e;
       border-radius: 8px;
       box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
       input {
@@ -55,8 +61,8 @@ export class FomComponent extends LitElement {
     return html`
       <form>
         <label>Crea un nuevo usuario</label>
-        <input type="text" name="user" @change=${this.handlerChange} />
-        <button @click=${() => Router.go("/game")}>Crear</button>
+        <input type="text" name="user" @change=${this.handlerChange} placeholder="Agrega un usuario"/>
+        <button @click=${() => Router.go("/game")} ?disabled=${!this.disabled}>Crear</button>
       </form>
     `;
   }

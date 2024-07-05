@@ -33,3 +33,11 @@ Main commands served from `package.json`
     * pages
     * service
     * usecase
+
+## El juego “Piedra, Papel, Tijera, Lagarto, Spock” es una variante del clásico “Piedra, Papel o Tijera” que añade dos elementos más para reducir las posibilidades de empate. Aquí tienes las reglas básicas:
+
+- Piedra aplasta a las Tijeras y aplasta al Lagarto.
+- Papel envuelve a la Piedra y desautoriza a Spock.
+- Tijeras cortan al Papel y decapitan al Lagarto.
+- Lagarto se come el Papel y envenena a Spock.
+- Spock aplasta a las Tijeras y vaporiza a la Piedra.

@@ -7,6 +7,15 @@ import spock from "../assets/spock.png";
 import "../components/card.component";
 import { getRandomChoice } from "../usecases/usecases";
 import { UserData, globalState } from "../service/global.state";
+import { Choice, Conditions } from "../types/types";
+
+const choices: { [key: number]: Choice } = {
+  0: { src: piedra, name: "Piedra" },
+  1: { src: papel, name: "Papel" },
+  2: { src: tijeras, name: "Tijeras" },
+  3: { src: lagarto, name: "Lagarto" },
+  4: { src: spock, name: "Spock" },
+};
 
 export class GamePage extends LitElement {
   static styles = css`
@@ -115,47 +124,60 @@ export class GamePage extends LitElement {
 
   paintMessage(message: string) {
     this.message = message;
-    setTimeout(() => {
-      this.message = "";
-    }, 1000);
+  }
+
+  logicOfGame(num: number) {
+    const winConditions: Conditions = {
+      0: [2, 3],
+      1: [0, 4],
+      2: [1, 3],
+      3: [1, 4],
+      4: [2, 0],
+    };
+
+    const loseConditions: Conditions = {
+      0: [1, 4],
+      1: [2, 3],
+      2: [0, 4],
+      3: [0, 2],
+      4: [1, 3],
+    };
+
+    if (winConditions[num].includes(this.robotSelection ?? 0)) {
+      this.puntosUser += 1;
+      this.paintMessage("Has Ganado");
+    } else if (loseConditions[num].includes(this.robotSelection ?? 0)) {
+      this.puntosRobot += 1;
+      this.paintMessage("Ha Ganado el robot");
+    } else {
+      this.paintMessage("Empate");
+    }
+
+    if (this.user) {
+      this.user.score = this.puntosUser;
+      globalState.setUserData([this.user]);
+    }
   }
 
   gameSelection(num: number) {
     setTimeout(() => this.selectionRobot(), 1000);
     setTimeout(() => {
-      if (num === 0 && this.robotSelection === 2) {
-        this.puntosUser += 1;
-        this.paintMessage("Has Ganado");
-      } else if (num === 2 && this.robotSelection === 1) {
-        this.puntosUser += 1;
-        this.paintMessage("Has Ganado");
-      } else if (num === 1 && this.robotSelection === 0) {
-        this.puntosUser += 1;
-        this.paintMessage("Has Ganado");
-      } else if (this.robotSelection === 0 && num === 2) {
-        this.puntosRobot += 1;
-        this.paintMessage(`Ha Ganado el robot`);
-      } else if (this.robotSelection === 2 && num === 1) {
-        this.puntosRobot += 1;
-        this.paintMessage(`Ha Ganado el robot`);
-      } else if (this.robotSelection === 1 && num === 0) {
-        this.puntosRobot += 1;
-        this.paintMessage(`Ha Ganado el robot`);
-      } else {
-        this.paintMessage(`Empate`);
-      }
-
-      if (this.user) {
-        this.user.score = this.puntosUser;
-        globalState.setUserData([this.user]);
-        console.log(this.puntosUser);
-      }
+      this.logicOfGame(num);
     }, 1002);
   }
 
   render() {
     return html`
       <card-component .puntosUser=${this.puntosUser}></card-component>
+      ${this.robotSelection !== null
+        ? html`
+            <div class="robot-selection">
+              <p>
+                El robot ha seleccionado: ${choices[this.robotSelection].name}
+              </p>
+            </div>
+          `
+        : ""}
       <p class="message">${this.message}</p>
       <div>
         <article>
